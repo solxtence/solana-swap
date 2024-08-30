@@ -1,0 +1,14 @@
+{
+  "name": "test-solxtence",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@solxtence/solana-swap": "^1.0.2"
+  }
+}

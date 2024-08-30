@@ -1,27 +1,3 @@
-# Solana Swap
-
-Package for performing token swaps on Solana - *Jito integrated 🚀*
-
-**Made with the Public and Free [Swap API](https://docs.solxtence.com/swap) by Solxtence <3**
-
-Useful for Sniper Bots, Volume Bots, Trading bots, Swap Platforms, DeFi applications...
-
-## Supported Platforms ⭐️
-- Pump.fun
-- Moonshot
-- Raydium
-- Raydium CPMM
-- Orca
-- Jupiter AMMs
-
-## Installation
-```bash
-  npm i @solxtence/solana-swap
-```
-
-## Usage
-
-```javascript
 const { Keypair } = require("@solana/web3.js");
 const bs58 = require("bs58");
 const SolanaSwap = require("@solxtence/solana-swap");
@@ -29,7 +5,7 @@ const SolanaSwap = require("@solxtence/solana-swap");
 // Function to perform a token swap
 async function swapIt(useJito = false) {
   // Step 1: Initialize the Keypair using a Private Key
-  // Note: You are not sending your Private Key anywhere here, it is only used to sign the transaction!
+  // Note: You're not sending your Private Key to anywhere here, it is only used to sign the transaction !
   const keypair = Keypair.fromSecretKey(
     bs58.decode(
       "PRIVATE_KEY_HERE"
@@ -106,16 +82,4 @@ async function swapIt(useJito = false) {
     );
   }
 }
-swapIt((useJito = false)); // set to 'true' to use Jito  🚀
-```
-
-## Notes
-- Swap API Docs: https://docs.solxtence.com/swap
-- Solxtence API handles routing through various Solana AMMs (Moonshot, Pump.fun, Raydium, Jupiter...).
-- You do not send any private key to any third party here.
-- Requires a Solana wallet with enough SOL for platform fees.
-
-## FAQ
-
-#### Is there a fee for using this API?
-No, the Swap API is completely free -  no fees included!g
+swapIt((useJito = false));
