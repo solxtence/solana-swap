@@ -1,0 +1,55 @@
+{
+  "name": "@solxtence/solana-swap",
+  "version": "1.0.2",
+  "description": "Solana Token Swap Repo for Solxtence Swap API",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "umd:main": "dist/umd/index.js",
+  "types": "dist/types/index.d.ts",
+  "browser": "dist/umd/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "start": "npm-run-all build --parallel watch:build watch:server --print-label",
+    "clean": "rimraf dist",
+    "build:esm": "tsc --module es2015 --outDir dist/esm && cp package.esm.json dist/esm/package.json",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs && cp package.cjs.json dist/cjs/package.json",
+    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist/types",
+    "build:umd": "tsc --module umd --outDir dist/umd",
+    "watch:build": "tsc --watch",
+    "watch:server": "nodemon './dist/cjs/index.js' --watch './dist/cjs'",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:umd && npm run build:types"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solxtence/solana-swap.git"
+  },
+  "keywords": [
+    "solana",
+    "pump.fun",
+    "moonshot",
+    "raydium",
+    "ocra",
+    "jupiter",
+    "swap"
+  ],
+  "author": "Solxtence",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/solxtence/solana-swap/issues"
+  },
+  "homepage": "https://github.com/solxtence/solana-swap#readme",
+  "dependencies": {
+    "@solana/web3.js": "^1.91.6",
+    "axios": "^1.6.8",
+    "bs58": "^6.0.0",
+    "promise-retry": "^2.0.1"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  }
+}
