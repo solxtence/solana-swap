@@ -14,108 +14,135 @@ Useful for Sniper Bots, Volume Bots, Trading bots, Swap Platforms, DeFi applicat
 - Orca
 - Jupiter AMMs
 
+## ⚠️ Important Security Note
+Your private key is never sent to the Solxtence API or any third party. It's only used locally to sign the transaction in your code. However, it's always recommended to review the code of any packages you are using for potential security issues or malicious code.
+
+## Prerequisites
+
+- Install Node.js from [nodejs.org](https://nodejs.org/)
+
 ## Installation
-```bash
-  npm i @solxtence/solana-swap
+
+1. Create a new project folder
+   ```
+   mkdir my-solana-swap
+   cd my-solana-swap
+   ```
+
+2. Initialize your project
+   ```
+   npm init -y
+   ```
+
+3. Install necessary packages
+   ```
+   npm install @solana/web3.js bs58 @solxtence/solana-swap
+   ```
+
+4. Create a new file named `swap.js` in your project folder
+
+## Build Your Swap Script
+
+Open `swap.js` in a text editor:
+
+1. Import required modules:
+   ```javascript
+   const { Keypair } = require("@solana/web3.js");
+   const bs58 = require("bs58");
+   const SolanaSwap = require("@solxtence/solana-swap");
+   ```
+   This imports the necessary functions and classes we'll use.
+
+2. Create the main function:
+   ```javascript
+   async function swapIt(useJito = false) {
+     // We'll add the swap logic here
+   }
+   ```
+   This function will contain our swap logic.
+
+3. Set up the keypair:
+   ```javascript
+   const privateKey = "YOUR_PRIVATE_KEY_HERE";
+   const keypair = Keypair.fromSecretKey(bs58.decode(privateKey));
+   ```
+   Replace `YOUR_PRIVATE_KEY_HERE` with your actual Solana wallet private key. This creates a keypair for signing transactions.
+
+4. Initialize SolanaSwap:
+   ```javascript
+   const solanaSwap = new SolanaSwap(
+     keypair,
+     "https://api.mainnet-beta.solana.com"
+   );
+   ```
+   This sets up the SolanaSwap instance with your keypair and a Solana RPC endpoint.
+
+5. Get swap instructions:
+   ```javascript
+   const swapResponse = await solanaSwap.getSwapInstructions(
+     "So11111111111111111111111111111111111111112", // From Token (SOL)
+     "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R", // To Token (example)
+     0.005, // Amount to swap
+     10, // Slippage tolerance (in percentage)
+     keypair.publicKey.toBase58(),
+     0.0005 // Priority fee
+   );
+   ```
+   This fetches the instructions from [our Swap API](https://docs.solxtence.com/swap/swap "our Swap API") for the swap. Customize the token addresses, amount, slippage, and fees as needed.
+
+6. Perform the swap:
+   ```javascript
+   try {
+     const txid = await solanaSwap.performSwap(swapResponse, {
+       sendConfig: { skipPreflight: true },
+       maxConfirmationAttempts: 30,
+       confirmationTimeout: 500,
+       commitmentLevel: "processed",
+       jitoConfig: useJito ? { active: true, tip: 0.0001 } : undefined,
+     });
+
+     console.log("TX Hash:", txid);
+     console.log("TX on Solscan:", `https://solscan.io/tx/${txid}`);
+   } catch (error) {
+     console.error("Error while performing the swap:", error.message);
+   }
+   ```
+   This executes the swap and handles the result, whether successful or not.
+
+7. Call the function:
+   ```javascript
+   swapIt(false); // Set to true to use Jito for faster transactions
+   ```
+   This runs the swap function. Change `false` to `true` to use Jito.
+
+Find the full example [here](https://github.com/solxtence/solana-swap/blob/98cc56e46317de263d0efda53378a3e089f28dfe/example.js).
+
+## Running Your Script
+
+Run your script using:
+```
+node swap.js
 ```
 
-## Usage
+## Important Notes
 
-```javascript
-const { Keypair } = require("@solana/web3.js");
-const bs58 = require("bs58");
-const SolanaSwap = require("@solxtence/solana-swap");
+- Always double-check token addresses and amounts before swapping
+- Keep your private key secret and secure
+- It's good practice to review any code that interacts with your wallet or performs financial transactions
 
-// Function to perform a token swap
-async function swapIt(useJito = false) {
-  // Step 1: Initialize the Keypair using a Private Key
-  // Note: You are not sending your Private Key anywhere here, it is only used to sign the transaction!
-  const keypair = Keypair.fromSecretKey(
-    bs58.decode(
-      "PRIVATE_KEY_HERE"
-    )
-  );
+## Troubleshooting
 
-  // Step 2: Initialize the SolanaSwap instance
-  const solanaSwap = new SolanaSwap(
-    keypair,
-    "https://api.mainnet-beta.solana.com"
-  );
+- If you get an error about missing modules, make sure you've installed all required packages (step 3)
+- If the swap fails, check that you have enough balance and that the token addresses are correct
+- If any unexpected error happens, just open an issue [here](https://github.com/solxtence/solana-swap/issues "here") and we will fix it as soon as possible <3
 
-  // Step 3: Fetch swap instructions from Solxtence swap API
-  // These instructions specify how to swap one token for another
-  const swapResponse = await solanaSwap.getSwapInstructions(
-    // The token you want to swap (From Token)
-    "So11111111111111111111111111111111111111112",
-    // The token you want to receive (To Token)
-    "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
-    0.005, // Amount to swap
-    10, // Slippage tolerance (in percentage)
-    keypair.publicKey.toBase58(), // Payer Public Key
-    0.0005 // Priority fee to speed up the transaction
-  );
+Remember, when dealing with real funds, start with small amounts to test everything works correctly!
 
-  if (useJito) {
-    // Step 4a: Perform the swap using Jito
-    try {
-      const txid = await solanaSwap.performSwap(swapResponse, {
-        sendConfig: { skipPreflight: true },
-        maxConfirmationAttempts: 30,
-        confirmationTimeout: 500,
-        commitmentLevel: "processed",
-        jitoConfig: {
-          active: true,
-          tip: 0.0001,
-        },
-      });
-
-      // Log the transaction ID and URL on Solscan
-      console.log("TX Hash:", txid);
-      return console.log("TX on Solscan:", `https://solscan.io/tx/${txid}`);
-    } catch (error) {
-      const { signature, message } = error;
-      return console.error(
-        "Error while performing the swap:",
-        message,
-        signature
-      );
-    }
-  }
-  // Step 4b: Perform the swap as a regular transaction
-  try {
-    const txid = await solanaSwap.performSwap(swapResponse, {
-      sendConfig: { skipPreflight: true }, // Skip the preflight transaction simulation
-      maxConfirmationAttempts: 30, // Number of retries for confirmation
-      confirmationTimeout: 500, // Timeout between retries in milliseconds
-      lastValidBlockHeightBuffer: 150, // Block height buffer for validity
-      resendDelay: 1000, // Interval to resend the transaction in case of failure
-      statusCheckInterval: 1000, // Interval to check confirmation status
-      commitmentLevel: "processed", // Level of commitment for confirmation ("processed", "confirmed", "finalized")
-      bypassConfirmation: false, // Set to true to skip confirmation checks and return txid immediately
-    });
-
-    // Log the transaction ID and URL on Solscan
-    console.log("TX Hash:", txid);
-    return console.log("TX on Solscan:", `https://solscan.io/tx/${txid}`);
-  } catch (error) {
-    const { signature, message } = error;
-    return console.error(
-      "Error while performing the swap:",
-      message,
-      signature
-    );
-  }
-}
-swapIt((useJito = false)); // set to 'true' to use Jito  🚀
-```
-
-## Notes
-- Swap API Docs: https://docs.solxtence.com/swap
-- Solxtence API handles routing through various Solana AMMs (Moonshot, Pump.fun, Raydium, Jupiter...).
-- You do not send any private key to any third party here.
-- Requires a Solana wallet with enough SOL for platform fees.
+## Resources
+- [Swap API Docs](https://docs.solxtence.com/swap "Swap API Docs")
+- [SolanaSwap NPM Package](https://www.npmjs.com/package/@solxtence/solana-swap "SolanaSwap NPM Package")
 
 ## FAQ
 
 #### Is there a fee for using this API?
-No, the Swap API is completely free -  no fees included!g
+No, the Swap API is completely free -  no fees included!
