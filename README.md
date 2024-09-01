@@ -34,9 +34,9 @@ Your private key is never sent to the Solxtence API or any third party. It's onl
    npm init -y
    ```
 
-3. Install necessary packages
+3. Install the `solana-swap` package
    ```
-   npm install @solana/web3.js bs58 @solxtence/solana-swap
+   npm i @solxtence/solana-swap
    ```
 
 4. Create a new file named `swap.js` in your project folder
