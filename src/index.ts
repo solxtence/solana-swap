@@ -11,6 +11,8 @@ import { QuoteResponse, SwapResponse } from "./types";
 import { submitJitoBundle, generateJitoTipTx, monitorJitoBundleStatus } from "./lib/jito";
 import { extractEncodedSignature } from "./lib/utils";
 
+
+export * from './types';
 export class SolanaSwap {
   private baseUrl = "https://swap.solxtence.com";
   private readonly connection: Connection;
@@ -148,5 +150,3 @@ export class SolanaSwap {
     return txid.toString();
   }
 }
-
-module.exports = SolanaSwap
