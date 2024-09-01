@@ -1,6 +1,6 @@
 const { Keypair } = require("@solana/web3.js");
 const bs58 = require("bs58");
-const SolanaSwap = require("@solxtence/solana-swap");
+const { SolanaSwap } = require("@solxtence/solana-swap");
 
 async function swapIt(useJito = false) {
   // Replace with your actual private key

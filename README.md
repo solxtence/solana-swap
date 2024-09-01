@@ -49,7 +49,7 @@ Open `swap.js` in a text editor and let's build the script step by step:
    ```javascript
    const { Keypair } = require("@solana/web3.js");
    const bs58 = require("bs58");
-   const SolanaSwap = require("@solxtence/solana-swap");
+   const { SolanaSwap } = require("@solxtence/solana-swap");
    ```
    This imports the necessary functions and classes we'll use.
 
