@@ -140,7 +140,7 @@ Open `swap.js` in a text editor and let's build the script step by step:
    swapIt(true, 0.003); // Adjust the number of your jito tip
    ```
 
-Find the full example [here](https://github.com/solxtence/solana-swap/blob/98cc56e46317de263d0efda53378a3e089f28dfe/example.js).
+Find the full example [here](https://github.com/solxtence/solana-swap/blob/main/example.js).
 
 ## Running Your Script
 
