@@ -7,17 +7,10 @@ import { Transaction, VersionedTransaction } from "@solana/web3.js";
  * @returns The base58-encoded signature string
  * @throws Error if the transaction is not signed by the fee payer
  */
-export function extractEncodedSignature(
+export function serializeAndEncode(
   tx: Transaction | VersionedTransaction
 ): string {
-  const signature = "signature" in tx ? tx.signature : tx.signatures[0];
-  
-  if (!signature) {
-    throw new Error(
-      "Transaction signature missing. Ensure the transaction is signed by the fee payer."
-    );
-  }
-  
+  let signature =  tx.serialize()
   return bs58.encode(signature);
 }
 
