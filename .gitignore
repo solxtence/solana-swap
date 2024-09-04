@@ -7,7 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-
+example.local.ts
 /dist
 
 # Diagnostic reports (https://nodejs.org/api/report.html)

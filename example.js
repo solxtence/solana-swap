@@ -2,7 +2,7 @@ const { Keypair } = require("@solana/web3.js");
 const bs58 = require("bs58");
 const { SolanaSwap } = require("@solxtence/solana-swap");
 
-async function swapIt(useJito = false) {
+async function swapIt(useJito = false, jitoTip = 0.002) { // `jitoTip` in SOL amount
   // Replace with your actual private key
   const privateKey = "YOUR_PRIVATE_KEY_HERE";
   
@@ -19,7 +19,8 @@ async function swapIt(useJito = false) {
     0.005, // Amount to swap
     10, // Slippage tolerance (in percentage)
     keypair.publicKey.toBase58(),
-    0.0005 // Priority fee
+    0.0005, // Priority fee
+    useJito ? jitoTip : undefined // If `useJito` is true, a jito tip instruction will be included in the TX
   );
 
   try {
@@ -28,7 +29,7 @@ async function swapIt(useJito = false) {
       maxConfirmationAttempts: 30,
       confirmationTimeout: 500,
       commitmentLevel: "processed",
-      jitoConfig: useJito ? { active: true, tip: 0.0001 } : undefined,
+      useJito,
     });
 
     console.log("TX Hash:", txid);
@@ -39,5 +40,6 @@ async function swapIt(useJito = false) {
 }
 
 // Run the swap function
-swapIt(false); // Set to true to use Jito for faster transactions
+swapIt(false); 
+// swapIt(true, 0.003); // Run this to send with Jito, adjust the number for your jito tip
 

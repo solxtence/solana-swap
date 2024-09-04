@@ -1,19 +1,8 @@
-import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import axios from "axios";
 
-// Jito Tip Accounts
-const JITO_TIP_ADDRESSES = [
-    "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5",
-    "HFqU5x63VTqvQss8hp11i4wVV8bD44PvwucfZ2bU7gRe",
-    "Cw8CFyM9FkoMi7K7Crf6HNQqf4uEMzpKw6QNghXLvLkY",
-    "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49",
-    "DfXygSm4jCyNCybVYYK6DwvWqjKee8pbDmJGcLWNDXjh",
-    "ADuUkR4vqLUMWXxW9gh6D6L8pMSawimctcNZ5pGwDcEt",
-    "DttWaMuVvTiduZRnguLF7jNxTgiMBZ1hyAumKUiL2KRL",
-    "3AVi9Tg9Uo68tJfuvoKvqKNWKkC5wPdSSdeBnizKZ6jT"
-];
 
 const JITO_API_ENDPOINT = "https://mainnet.block-engine.jito.wtf/api/v1/bundles";
+
 
 export async function submitJitoBundle(txs: Array<string>) {
     const bundleRequest = {
@@ -26,6 +15,7 @@ export async function submitJitoBundle(txs: Array<string>) {
         const response = await axios.post(JITO_API_ENDPOINT, bundleRequest, {
             headers: { "Content-Type": "application/json" },
         });
+
         return response.data;
     } catch (error: any) {
         if (error?.response?.data?.error) {
@@ -35,16 +25,6 @@ export async function submitJitoBundle(txs: Array<string>) {
     }
 }
 
-export const generateJitoTipTx = async (senderAddress: string, tipAmount: number) => {
-    const randomTipAccount = JITO_TIP_ADDRESSES[Math.floor(Math.random() * JITO_TIP_ADDRESSES.length)];
-    return new Transaction().add(
-        SystemProgram.transfer({
-            fromPubkey: new PublicKey(senderAddress),
-            toPubkey: new PublicKey(randomTipAccount),
-            lamports: tipAmount * LAMPORTS_PER_SOL,
-        })
-    );
-}
 
 export async function fetchJitoBundleStatuses(bundleIds: string[]) {
     const statusRequest = {

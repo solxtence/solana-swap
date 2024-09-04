@@ -46,10 +46,7 @@ export interface TxHandlerConfig {
   statusCheckInterval?: number;
   bypassConfirmation?: boolean;
   commitmentLevel?: ValidCommitment;
-  jitoConfig?: {
-    active: boolean;
-    tip: number;
-  };
+  useJito?: boolean;
 }
 
 // Default configuration for transaction handling
@@ -62,10 +59,7 @@ const DEFAULT_CONFIG: TxHandlerConfig = {
   statusCheckInterval: 1000,
   bypassConfirmation: false,
   commitmentLevel: "processed",
-  jitoConfig: {
-    active: false,
-    tip: 0,
-  }
+  useJito: false,
 };
 
 // Main function to handle transaction sending and confirmation

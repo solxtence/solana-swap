@@ -8,8 +8,8 @@ import {
 } from "@solana/web3.js";
 import { handleTransaction, TxHandlerConfig } from "./lib/sender";
 import { QuoteResponse, SwapResponse } from "./types";
-import { submitJitoBundle, generateJitoTipTx, monitorJitoBundleStatus } from "./lib/jito";
-import { extractEncodedSignature } from "./lib/utils";
+import { submitJitoBundle, monitorJitoBundleStatus } from "./lib/jito";
+import { serializeAndEncode } from "./lib/utils";
 
 
 export * from './types';
@@ -55,6 +55,7 @@ export class SolanaSwap {
     slippage: number,
     payer: string,
     priorityFee?: number,
+    jitoTip?: number,
     forceLegacy?: boolean
   ): Promise<SwapResponse> {
     const params = new URLSearchParams({
@@ -65,8 +66,11 @@ export class SolanaSwap {
       payer,
       txType: forceLegacy ? "legacy" : "v0",
     });
-    if (priorityFee) {
+    if (priorityFee !== undefined) {
       params.append("fee", priorityFee.toString());
+    }
+    if (jitoTip !== undefined) {
+      params.append("jitoTip", jitoTip.toString());
     }
     const url = `${this.baseUrl}/swap?${params}`;
     try {
@@ -88,10 +92,7 @@ export class SolanaSwap {
       resendDelay: 1000,
       statusCheckInterval: 1000,
       bypassConfirmation: false,
-      jitoConfig: {
-        active: false,
-        tip: 0
-      }
+      useJito: false,
     }
   ): Promise<string> {
     let serializedTransactionBuffer: Buffer | Uint8Array;
@@ -123,13 +124,8 @@ export class SolanaSwap {
       txn.sign(this.keypair);
     }
 
-    if (options.jitoConfig?.active) {
-      // Create a tip transaction for the Jito block engine
-      const tipTxn = await generateJitoTipTx(this.keypair.publicKey.toBase58(), options.jitoConfig.tip);
-      tipTxn.recentBlockhash = blockhash.blockhash;
-      tipTxn.sign(this.keypair);
-
-      const response = await submitJitoBundle([extractEncodedSignature(txn), extractEncodedSignature(tipTxn)]);
+    if (options.useJito) {
+      const response = await submitJitoBundle([serializeAndEncode(txn)]);
       if (response.result) {
         const txid = await monitorJitoBundleStatus(
           response.result,
