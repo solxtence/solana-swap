@@ -13,6 +13,10 @@ import { serializeAndEncode } from "./lib/utils";
 
 
 export * from './types';
+export * from './lib/jito';
+export * from './lib/sender';
+export * from './lib/utils'
+
 export class SolanaSwap {
   private baseUrl = "https://swap.solxtence.com";
   private readonly connection: Connection;
