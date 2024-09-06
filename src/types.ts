@@ -59,3 +59,9 @@ export interface SwapResponse {
     };
   };
 }
+
+export interface ErrorResponse {
+  error: string,
+  message: string,
+  statusCode: number,
+}

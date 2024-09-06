@@ -7,7 +7,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { handleTransaction, TxHandlerConfig } from "./lib/sender";
-import { QuoteResponse, SwapResponse } from "./types";
+import { ErrorResponse, QuoteResponse, SwapResponse } from "./types";
 import { submitJitoBundle, monitorJitoBundleStatus } from "./lib/jito";
 import { serializeAndEncode } from "./lib/utils";
 
@@ -36,7 +36,7 @@ export class SolanaSwap {
     to: string,
     amount: number,
     slippage: number
-  ): Promise<QuoteResponse> {
+  ): Promise<QuoteResponse | ErrorResponse> {
     const params = new URLSearchParams({
       from,
       to,
@@ -46,7 +46,7 @@ export class SolanaSwap {
     const url = `${this.baseUrl}/rate?${params}`;
     try {
       const response = await axios.get(url);
-      return response.data as QuoteResponse;
+      return response.data as QuoteResponse | ErrorResponse;
     } catch (error) {
       throw error;
     }
@@ -61,7 +61,7 @@ export class SolanaSwap {
     priorityFee?: number,
     jitoTip?: number,
     forceLegacy?: boolean
-  ): Promise<SwapResponse> {
+  ): Promise<SwapResponse | ErrorResponse> {
     const params = new URLSearchParams({
       from,
       to,
@@ -79,7 +79,7 @@ export class SolanaSwap {
     const url = `${this.baseUrl}/swap?${params}`;
     try {
       const response = await axios.get(url);
-      return response.data as SwapResponse;
+      return response.data as SwapResponse | ErrorResponse;
     } catch (error) {
       throw error;
     }
