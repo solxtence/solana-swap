@@ -100,7 +100,7 @@ Open `swap.js` in a text editor and let's build the script step by step:
      0.005, // Amount to swap
      10, // Slippage tolerance (in percentage)
      keypair.publicKey.toBase58(),
-     0.0005 // Priority fee
+     0.0005, // Priority fee
      useJito ? jitoTip : undefined  // If `useJito` is true, a jito tip instruction will be included in the TX
    );
    ```
