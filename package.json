@@ -1,6 +1,6 @@
 {
   "name": "@solxtence/solana-swap",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A Solana library for swapping any tokens easily!",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
