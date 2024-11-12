@@ -112,19 +112,27 @@ export class SolanaSwap {
       }
       serializedTransactionBuffer = buffer;
     }
-    let txn: VersionedTransaction | Transaction;
 
-    const blockhash = await this.connection.getLatestBlockhash();
-    const blockhashWithExpiryBlockHeight: BlockhashWithExpiryBlockHeight = {
-      blockhash: blockhash.blockhash,
-      lastValidBlockHeight: blockhash.lastValidBlockHeight,
+    // Get fresh blockhash first
+    const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash();
+    const blockhashInfo: BlockhashWithExpiryBlockHeight = {
+      blockhash,
+      lastValidBlockHeight,
     };
+
+    let txn: VersionedTransaction | Transaction;
 
     if (swapResponse.transaction.txType === 'v0') {
       txn = VersionedTransaction.deserialize(serializedTransactionBuffer);
+      // Update blockhash for versioned transaction
+      const message = txn.message;
+      // @ts-ignore - accessing private field
+      message.recentBlockhash = blockhash;
       txn.sign([this.keypair]);
     } else {
       txn = Transaction.from(serializedTransactionBuffer);
+      // Update blockhash for legacy transaction
+      txn.recentBlockhash = blockhash;
       txn.sign(this.keypair);
     }
 
@@ -144,7 +152,7 @@ export class SolanaSwap {
     const txid = await handleTransaction({
       conn: this.connection,
       txBuffer: txn.serialize() as Buffer,
-      blockhashInfo: blockhashWithExpiryBlockHeight,
+      blockhashInfo: blockhashInfo,
       config: options,
     });
     return txid.toString();
